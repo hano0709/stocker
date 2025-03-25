@@ -56,27 +56,45 @@ def handle_prediction(stock_name, duration):
 
     return f"✅ Predicted price of {ticker} after {duration}: **${predicted_price:.2f}**\n{change_str}\nModel Accuracy: {accuracy:.2f}%"
 
-# ✅ Gemini chatbot logic
+# ✅ Gemini chatbot logic with conversational flow
+session_state = {"step": 0, "stock_name": None}
+
 def chatbot(user_message, history):
     try:
-        # Use Gemini AI to process user request
-        response = model.generate_content(f"User: {user_message}\nGemini:")
-        bot_reply = response.text.strip()
+        user_message_lower = user_message.lower()
 
-        # Check if user is asking about stock prediction
-        if "stock" in user_message.lower() or "price" in user_message.lower():
-            words = user_message.split()
-            if len(words) >= 3:
-                stock_name, duration = words[-2], words[-1]  # Extract stock name & duration
-                prediction = handle_prediction(stock_name, duration)
-                bot_reply += f"\n\n{prediction}"
-        
-        return bot_reply
+        # 🔹 Step 1: Ask for stock name
+        if session_state["step"] == 0:
+            session_state["step"] = 1
+            return "Which stock are you interested in? (e.g., Apple, Google, Nvidia)"
+
+        # 🔹 Step 2: Store stock name & ask for duration
+        elif session_state["step"] == 1:
+            session_state["stock_name"] = user_message.strip()
+            session_state["step"] = 2
+            return "For how long would you like a prediction? (e.g., 1d, 1w, 1mo)"
+
+        # 🔹 Step 3: Convert to ticker & predict
+        elif session_state["step"] == 2:
+            stock_name = session_state["stock_name"]
+            duration = user_message.strip()
+            session_state["step"] = 0  # Reset for next query
+            
+            ticker = get_ticker(stock_name)
+            if not ticker:
+                return f"❌ Couldn't determine the ticker for '{stock_name}'. Try again."
+            
+            prediction = handle_prediction(stock_name, duration)
+            return f"📈 Prediction for {stock_name} ({ticker}) in {duration}:\n\n{prediction}"
+
+        # Default fallback
+        return "I'm not sure what you mean. Let's start over! Which stock are you interested in?"
+    
     except Exception as e:
-        return f"Error: {str(e)}"
+        return f"❌ Error: {str(e)}"
 
 # ✅ Gradio Chat Interface
 chat_app = gr.ChatInterface(fn=chatbot, title="Gemini Stock Chatbot", description="Chat with Gemini AI about stock predictions!")
 
 if __name__ == "__main__":
-    chat_app.launch(server_name="0.0.0.0", server_port=7860, share=True)  # Runs on Hugging Face Spaces
+    chat_app.launch(server_name="0.0.0.0", server_port=7860)
