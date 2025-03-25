@@ -1,0 +1,56 @@
+{
+    "stocks": {
+        "AAPL": {
+            "added_date": "2025-03-23 13:29:27",
+            "last_trained": "2025-03-23 13:36:41",
+            "accuracy": 0.9423798285421918,
+            "model_path": "models\\AAPL_model.pt"
+        },
+        "DASH": {
+            "added_date": "2025-03-25 11:34:35",
+            "last_trained": "2025-03-25 11:35:19",
+            "accuracy": 0.8300418622981807,
+            "model_path": "models\\DASH_model.pt"
+        },
+        "GOOGL": {
+            "added_date": "2025-03-25 11:35:32",
+            "last_trained": "2025-03-25 11:38:50",
+            "accuracy": 0.6163084908703566,
+            "model_path": "models\\GOOGL_model.pt"
+        },
+        "MSFT": {
+            "added_date": "2025-03-25 11:39:27",
+            "last_trained": "2025-03-25 11:45:12",
+            "accuracy": 0.9241499078292561,
+            "model_path": "models\\MSFT_model.pt"
+        }
+    },
+    "transformer_config": {
+        "d_model": 128,
+        "nhead": 8,
+        "num_encoder_layers": 4,
+        "num_decoder_layers": 4,
+        "dim_feedforward": 256,
+        "dropout": 0.2,
+        "batch_size": 32,
+        "learning_rate": 0.0001,
+        "epochs": 100,
+        "feature_columns": [
+            "Returns",
+            "MA_10",
+            "MA_30",
+            "MACD",
+            "RSI",
+            "Volatility_10",
+            "Volatility_30",
+            "SP500_Returns",
+            "Day_of_Week",
+            "Month",
+            "Pre_Holiday",
+            "Post_Holiday",
+            "Lag_Returns",
+            "Lag_MA_10",
+            "Lag_MA_30"
+        ]
+    }
+}

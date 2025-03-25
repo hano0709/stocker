@@ -1,0 +1,1 @@
+pip install torch pandas numpy yfinance scikit-learn gradio matplotlib tqdm schedule
